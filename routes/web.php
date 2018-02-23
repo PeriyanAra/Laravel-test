@@ -13,4 +13,14 @@
 
 Route::get('/', function () {
     return view('welcome');
+});	
+
+Route::get('/admin', function () {
+    return "Admin page";
+});
+
+Route::prefix('admin')->group(function () {
+    
+    Route::resource('companies', 'Admin\CompaniesResourceController');
+
 });
