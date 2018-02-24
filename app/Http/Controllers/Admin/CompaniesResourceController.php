@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class CompaniesResourceController extends Controller
 {
@@ -36,9 +37,17 @@ class CompaniesResourceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+
     public function store(Request $request)
     {
-        //
+    	$path = $request->logo->store('/', 'uploads');
+        DB::table('companies')->insert(
+		  ['name' => $request->name, 'email' => $request->email, 'website' => $request->website, 'logo' => $request->path]
+		);
+
+
+		return redirect()->route('companies.index');
     }
 
     /**
@@ -49,7 +58,10 @@ class CompaniesResourceController extends Controller
      */
     public function show($id)
     {
-        //
+        $companie = DB::table('companies')->where('id', $id)->get();
+        
+
+        return view('Companies.show', ['companie' => $companie]);
     }
 
     /**
@@ -60,7 +72,10 @@ class CompaniesResourceController extends Controller
      */
     public function edit($id)
     {
-        //
+        $companie = DB::table('companies')->where('id', $id)->get();
+        
+
+        return view('Companies.edit', ['companie' => $companie]);
     }
 
     /**
@@ -72,7 +87,9 @@ class CompaniesResourceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::table('companies')->where('id', $id)->update(['name' => $request->name]);
+
+        return back()->with('status', 'Profile updated');
     }
 
     /**
@@ -83,6 +100,8 @@ class CompaniesResourceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table('companies')->where('id', $id)->delete();
+
+        return redirect()->route('companies.index');
     }
 }
