@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
+use App\Http\Middleware\CustomIdFilter;
+
+use App\Company;
 
 class CompaniesResourceController extends Controller
 {
@@ -14,9 +18,10 @@ class CompaniesResourceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function index(Request $request)
     {
-        $companies = DB::table('companies')->get();
+        $companies = Company::paginate(10);
 
         return view('Companies.index', ['companies' => $companies]);
     }
@@ -41,10 +46,23 @@ class CompaniesResourceController extends Controller
 
     public function store(Request $request)
     {
-    	$path = $request->logo->store('/', 'uploads');
-        DB::table('companies')->insert(
-		  ['name' => $request->name, 'email' => $request->email, 'website' => $request->website, 'logo' => $request->path]
-		);
+    	$validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'website' => 'required',
+          'logo' => 'required|dimensions:min_width=100,min_height=200'  
+        ]);
+
+        $path = $request->logo->store('/', 'uploads');
+
+		$companie = new Company;
+
+		$companie->name = $request->name;
+		$companie->email = $request->email;
+		$companie->website = $request->website;
+		$companie->logo = $path;
+
+		$companie->save();
 
 
 		return redirect()->route('companies.index');
@@ -56,12 +74,19 @@ class CompaniesResourceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $companie = DB::table('companies')->where('id', $id)->get();
+        if(!Company::find($id)){
+            abort(404);
+        }
+
+        $name = Company::find($id)->name;
+        $email = Company::find($id)->email;
+        $website = Company::find($id)->website;
+        $logo = Company::find($id)->logo;
         
 
-        return view('Companies.show', ['companie' => $companie]);
+        return view('Companies.show', ['name' => $name, 'email' => $email, 'website' => $website, 'logo' => $logo]);
     }
 
     /**
@@ -70,12 +95,19 @@ class CompaniesResourceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $companie = DB::table('companies')->where('id', $id)->get();
+        if(!Company::find($id)){
+            abort(404);
+        }
+
+        $name = Company::find($id)->name;
+        $email = Company::find($id)->email;
+        $website = Company::find($id)->website;
+        $logo = Company::find($id)->logo;
         
 
-        return view('Companies.edit', ['companie' => $companie]);
+        return view('Companies.edit', ['name' => $name, 'email' => $email, 'website' => $website, 'id' => $id, 'logo' => $logo]);
     }
 
     /**
@@ -87,7 +119,22 @@ class CompaniesResourceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        DB::table('companies')->where('id', $id)->update(['name' => $request->name]);
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'website' => 'required',
+          'logo' => 'required|dimensions:min_width=100,min_height=200'  
+        ]);
+        
+        $path = $request->logo->store('/', 'uploads');
+
+        if(Storage::disk('uploads')->exists(Company::find($id)->logo)){
+            Storage::disk('uploads')->delete(Company::find($id)->logo);
+        }
+
+
+        Company::where('id', $id)
+          ->update(['name' => $request->name, 'email' => $request->email, 'website' => $request->website, 'logo' => $path]);
 
         return back()->with('status', 'Profile updated');
     }
@@ -100,7 +147,11 @@ class CompaniesResourceController extends Controller
      */
     public function destroy($id)
     {
-        DB::table('companies')->where('id', $id)->delete();
+        if(Storage::disk('uploads')->exists(Company::find($id)->logo)){
+            Storage::disk('uploads')->delete(Company::find($id)->logo);
+        }
+
+        Company::destroy($id);
 
         return redirect()->route('companies.index');
     }

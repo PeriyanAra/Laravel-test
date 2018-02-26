@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Companies</title>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
 	<h1>Companies list</h1><br>
 
-	<a href="{{ url('admin/companies/create') }}">Add new companie</a><br><br>
+	<a href="{{ url('admin/companies/create') }}" class="btn btn-primary btn-lg">Add new companie</a><br><br>
 
-	<table style="border: 1px solid black">
+	<table class="table table-striped">
 		<thead>
 			<th>Name</th>
 			<th>Email</th>
@@ -25,7 +22,7 @@ echo <<<HTML
 		<td><a href="/admin/companies/$companie->id">$companie->name</a></td>
 		<td>$companie->email</td>
 		<td>$companie->website</td>
-		<td><a href="/admin/companies/$companie->id/edit">Edit</a></td>
+		<td><a href="/admin/companies/$companie->id/edit" class="btn btn-warning">Edit</a></td>
 		<td>
 			<form method="POST" action="/admin/companies/$companie->id">
 HTML;
@@ -33,7 +30,7 @@ HTML;
 				@csrf<?php
 echo <<<HTML
 				<input type="hidden" name="_method" value="DELETE">
-				<input type="submit" value="Delete">
+				<input type="submit" value="Delete" class="btn btn-warning">
 			</form>			
 		</td>
 	</tr>
@@ -43,5 +40,6 @@ HTML;
 			?>
 		</tbody>
 	</table>
-</body>
-</html>
+
+	{{ $companies->links() }}
+@endsection

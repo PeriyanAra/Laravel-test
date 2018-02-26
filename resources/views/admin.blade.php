@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Admin</title>
-</head>
-<body>
-	<h1>Admin page</h1><br><br>
+@extends('layouts.app')
 
-	<a href="{{ url('admin/companies') }}">Companies</a><br><br>
-</body>
-</html>
+@section('content')
+<div class="row justify-content-around">
+	<a href="{{ url('admin/companies') }}" class="col-4 link btn btn-primary btn-lg">Companies</a><br><br>
+	<a href="{{ url('admin/employees') }}" class="col-4 link btn btn-primary btn-lg">Employees</a><br><br>
+</div>
+@endsection
+	

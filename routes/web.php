@@ -12,15 +12,22 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin'); 
 });	
 
 Route::get('/admin', function () {
     return view('admin');
-});
+})->middleware('auth')->name('admin');
 
-Route::prefix('admin')->group(function () {
+
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function(){
     
     Route::resource('companies', 'Admin\CompaniesResourceController');
+    
 
+    Route::resource('employees', 'Admin\EmployeesResourceController');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
