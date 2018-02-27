@@ -15,12 +15,8 @@ class EmployeesResourceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        
+    {        
         $employees = Employee::paginate(10);
-        // dd($employees->companie);
-         //dd(Employee::find(3)->company);
-        // $comapnie = Companies::find()->comments()->where('title', 'foo')->first();
         return view('Employees.index', ['employees' => $employees]);
     }
 
@@ -32,7 +28,6 @@ class EmployeesResourceController extends Controller
     public function create()
     {
         $companies_list = Company::all();
-        //dd($companies_list);
 
         return view('Employees.create', ['companies_list' => $companies_list]);
     }
@@ -47,15 +42,12 @@ class EmployeesResourceController extends Controller
     {
         
         $employee = new Employee;
-
         $employee->name = $request->name;
         $employee->lastname = $request->lastname;
         $employee->companies_id = $request->company;
         $employee->email = $request->email;
         $employee->phone = $request->phone;
-
         $employee->save();
-
 
         return redirect()->route('employees.index');
     }
@@ -68,18 +60,16 @@ class EmployeesResourceController extends Controller
      */
     public function show($id)
     {
-        if(!Employee::find($id)){
+        if (!Employee::find($id)) {
             abort(404);
         }
 
         $company_id = Employee::find($id)->companies_id;
-
         $name = Employee::find($id)->name;
         $lastname = Employee::find($id)->lastname;
         $company = Company::find($company_id)->name;
         $email = Employee::find($id)->email;
-        $phone = Employee::find($id)->phone;
-        
+        $phone = Employee::find($id)->phone;        
 
         return view('Employees.show', ['name' => $name, 'lastname' => $lastname, 'company' => $company, 'email' => $email, 'phone' => $phone]);
     }
@@ -92,19 +82,16 @@ class EmployeesResourceController extends Controller
      */
     public function edit($id)
     {
-        if(!Employee::find($id)){
+        if (!Employee::find($id)) {
             abort(404);
         }
 
-
         $company_id = Employee::find($id)->companies_id;
         $companies_list = Company::all();
-
         $name = Employee::find($id)->name;
         $lastname = Employee::find($id)->lastname;
         $email = Employee::find($id)->email;
-        $phone = Employee::find($id)->phone;
-        
+        $phone = Employee::find($id)->phone;        
 
         return view('Employees.edit', ['name' => $name, 'lastname' => $lastname, 'company_selected' => $company_id, 'email' => $email, 'phone' => $phone, 'id' => $id, 'companies_list' => $companies_list]);
     }

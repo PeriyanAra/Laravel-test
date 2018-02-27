@@ -11,7 +11,7 @@ class Employee extends Model
     public $timestamps = false;
 
     public function company()
-	  {
-	    return $this->belongsTo('App\Company', 'companies_id');
-	  }
+	{
+		return $this->belongsTo('App\Company', 'companies_id');
+	}
 }

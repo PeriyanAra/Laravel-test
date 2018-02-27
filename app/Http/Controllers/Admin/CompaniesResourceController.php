@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 use App\Http\Middleware\CustomIdFilter;
-
 use App\Company;
 
 class CompaniesResourceController extends Controller
@@ -50,20 +49,15 @@ class CompaniesResourceController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'website' => 'required',
-          'logo' => 'required|dimensions:min_width=100,min_height=200'  
+            'logo' => 'required|dimensions:min_width=100,min_height=200'  
         ]);
-
         $path = $request->logo->store('/', 'uploads');
-
 		$companie = new Company;
-
 		$companie->name = $request->name;
 		$companie->email = $request->email;
 		$companie->website = $request->website;
 		$companie->logo = $path;
-
 		$companie->save();
-
 
 		return redirect()->route('companies.index');
     }
@@ -76,15 +70,14 @@ class CompaniesResourceController extends Controller
      */
     public function show(Request $request, $id)
     {
-        if(!Company::find($id)){
+        if (!Company::find($id)) {
             abort(404);
         }
 
         $name = Company::find($id)->name;
         $email = Company::find($id)->email;
         $website = Company::find($id)->website;
-        $logo = Company::find($id)->logo;
-        
+        $logo = Company::find($id)->logo;        
 
         return view('Companies.show', ['name' => $name, 'email' => $email, 'website' => $website, 'logo' => $logo]);
     }
@@ -97,15 +90,14 @@ class CompaniesResourceController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        if(!Company::find($id)){
+        if (!Company::find($id)) {
             abort(404);
         }
 
         $name = Company::find($id)->name;
         $email = Company::find($id)->email;
         $website = Company::find($id)->website;
-        $logo = Company::find($id)->logo;
-        
+        $logo = Company::find($id)->logo;        
 
         return view('Companies.edit', ['name' => $name, 'email' => $email, 'website' => $website, 'id' => $id, 'logo' => $logo]);
     }
@@ -123,15 +115,14 @@ class CompaniesResourceController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'website' => 'required',
-          'logo' => 'required|dimensions:min_width=100,min_height=200'  
+            'logo' => 'required|dimensions:min_width=100,min_height=200'  
         ]);
         
         $path = $request->logo->store('/', 'uploads');
 
-        if(Storage::disk('uploads')->exists(Company::find($id)->logo)){
+        if (Storage::disk('uploads')->exists(Company::find($id)->logo)) {
             Storage::disk('uploads')->delete(Company::find($id)->logo);
         }
-
 
         Company::where('id', $id)
           ->update(['name' => $request->name, 'email' => $request->email, 'website' => $request->website, 'logo' => $path]);
@@ -147,7 +138,7 @@ class CompaniesResourceController extends Controller
      */
     public function destroy($id)
     {
-        if(Storage::disk('uploads')->exists(Company::find($id)->logo)){
+        if (Storage::disk('uploads')->exists(Company::find($id)->logo)) {
             Storage::disk('uploads')->delete(Company::find($id)->logo);
         }
 

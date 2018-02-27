@@ -11,20 +11,20 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function () 
+{
     return redirect()->route('admin'); 
 });	
 
-Route::get('/admin', function () {
+Route::get('/admin', function () 
+{
     return view('admin');
 })->middleware('auth')->name('admin');
 
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function(){
-    
-    Route::resource('companies', 'Admin\CompaniesResourceController');
-    
-
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () 
+{    
+    Route::resource('companies', 'Admin\CompaniesResourceController');  
     Route::resource('employees', 'Admin\EmployeesResourceController');
 });
 
