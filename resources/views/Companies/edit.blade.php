@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-	<a href="{{ url('admin/companies') }}" class="btn btn-primary btn-lg">Companies</a><br><br>
+	<a href="{{ url('admin/companies') }}" class="btn btn-primary btn-lg">Companies List</a><br><br>
 	<h3>Edit page</h3>
 
 	@if ($errors->any())
